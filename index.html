@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SATURDAY</title>
+    <link rel="stylesheet" href="stylesheets/STYLE.CSS" />
+  </head>
+  <body>
+    <section class="section-chatbot container">
+      <div class="chatbot-container">
+        <div class="chatbot-name-container">
+          <h1 class="chatbot-name">SATURDAY</h1>
+        </div>
+        <div class="chat-container">
+          <div class="chat-box" id="chat-box">
+            <div class="chat-message bot">
+              Hello! How can I assist you today?
+            </div>
+          </div>
+          <div class="chat-input-container">
+            <input
+              type="text"
+              id="user-input"
+              placeholder="Type a message..."
+            />
+            <button id="send-btn">Send</button>
+          </div>
+        </div>
+      </div>
+      <script>
+        const responses = {
+          hello: "Hi there! How are you feeling today?",
+          "how are you":
+            "I'm just a bot, but I'm here to help! How can I assist you?",
+          sad: "I'm sorry to hear that. Do you want to talk about it?",
+          happy: "That's great to hear! What made you happy today?",
+          "thank you": "You're welcome! I'm here anytime you need me.",
+        };
+
+        document
+          .getElementById("send-btn")
+          .addEventListener("click", function () {
+            let userInput = document
+              .getElementById("user-input")
+              .value.toLowerCase();
+            if (userInput.trim() === "") return;
+
+            let chatBox = document.getElementById("chat-box");
+            let userMessage = document.createElement("div");
+            userMessage.classList.add("chat-message", "user");
+            userMessage.textContent = userInput;
+            chatBox.appendChild(userMessage);
+
+            document.getElementById("user-input").value = "";
+
+            setTimeout(() => {
+              let botMessage = document.createElement("div");
+              botMessage.classList.add("chat-message", "bot");
+
+              let response =
+                responses[userInput] || "I'm here to listen. Tell me more.";
+              botMessage.textContent = response;
+              chatBox.appendChild(botMessage);
+              chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000);
+          });
+      </script>
+    </section>
+  </body>
+</html>
