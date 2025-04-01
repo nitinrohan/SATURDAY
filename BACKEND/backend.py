@@ -1,3 +1,6 @@
+##### backend code
+
+
 from flask import Flask, request, jsonify
 from transformers import pipeline
 from flask_cors import CORS
@@ -33,3 +36,5 @@ def analyze_sentiment():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
