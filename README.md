@@ -74,6 +74,14 @@ An intelligent chatbot that detects user emotions using NLP techniques (fine-tun
     ```bash
     pip install -r requirements.txt
     ```
+2. Preprocess the data :
+    ```bash
+    python emotion_data_preprocessing.py
+    ```
+2. train the model:
+    ```bash
+    python train_emotion_model.py
+    ```
 3. Start the backend:
     ```bash
     cd BACKEND
