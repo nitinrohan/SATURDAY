@@ -1,9 +1,7 @@
 # SATURDAY
 A EMPHATHATIC CHATBOT
 
-<p align="center">
-  <img src="https://imgur.com/YlVCXYp.png" alt="Empathetic Chatbot Banner" width="800"/>
-</p>
+
 
 <h1 align="center">🤖 Emotion-Aware Empathetic Chatbot</h1>
 
