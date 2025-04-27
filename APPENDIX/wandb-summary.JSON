@@ -1,0 +1,18 @@
+{
+    "_step": 84,
+    "_wandb": {
+      "runtime": 3754
+    },
+    "train_steps_per_second": 11.1,
+    "train/loss": 1.7375,
+    "train/learning_rate": 1.29429087109338e-7,
+    "train/grad_norm": 9.8751802444458,
+    "train/epoch": 3,
+    "_timestamp": 1745693647.5297,
+    "total_flos": 41277986195664000,
+    "train_samples_per_second": 177.595,
+    "train_runtime": 3793.6221,
+    "train/global_step": 42108,
+    "train_loss": 1.91364671647905,
+    "_runtime": 3752.710300542
+  }
