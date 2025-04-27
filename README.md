@@ -1,8 +1,6 @@
 # SATURDAY
 A EMPHATHATIC CHATBOT
 
-
-Link: https://nitinrohan.github.io/SATURDAY/
 <p align="center">
   <img src="https://imgur.com/YlVCXYp.png" alt="Empathetic Chatbot Banner" width="800"/>
 </p>
