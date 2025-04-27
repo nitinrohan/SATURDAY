@@ -10,9 +10,7 @@ A EMPHATHATIC CHATBOT
   Smart Sentiment Detection + Human-Like Conversations 🚀
 </p>
 
-<p align="center">
-  <img src="BANNER IMAGE LINK HERE" alt="Project Banner" />
-</p>
+
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" />
