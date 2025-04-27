@@ -1,0 +1,27 @@
+# Ignore large dataset files
+DATASETS/
+*.csv
+
+# Ignore trained model weights
+BACKEND/trained_emotion_model/
+*.safetensors
+
+# Ignore logs, results, and temporary files
+logs/
+results/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+.env/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore other temp files
+*.bak
+*.swp
