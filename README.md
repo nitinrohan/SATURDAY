@@ -108,7 +108,7 @@ An intelligent chatbot that detects user emotions using NLP techniques (fine-tun
 ## 📄 License
 This project is open-source and free to use.
 
-## Appendix
+## 📚 Appendix
 
 A. Training Logs (W&B)
     - wandb-summary.json attached
