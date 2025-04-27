@@ -1,4 +1,4 @@
-# SATURDAY
+# SATURDAY (Sentiment-Aware Textual Understanding and Response Dialogue Assistant)
 A EMPHATHATIC CHATBOT
 
 ![SATURDAY](assets/banner.png)
