@@ -1,11 +1,8 @@
 # SATURDAY
 A EMPHATHATIC CHATBOT
 
+![SATURDAY](assets/banner.png)
 
-Link: https://nitinrohan.github.io/SATURDAY/
-<p align="center">
-  <img src="https://imgur.com/YlVCXYp.png" alt="Empathetic Chatbot Banner" width="800"/>
-</p>
 
 <h1 align="center">🤖 Emotion-Aware Empathetic Chatbot</h1>
 
