@@ -1,3 +1,5 @@
+# BACKEND/backend.py
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from transformers import BertTokenizerFast, BertForSequenceClassification
@@ -8,13 +10,13 @@ import random
 app = Flask(__name__)
 CORS(app)
 
-# Load your saved model and tokenizer
-model_path = r"D:\\02_TAMUCC SPRING 2025\\HCI\\TERM-PROJECT\\BACKEND\\trained_emotion_model"
-tokenizer = BertTokenizerFast.from_pretrained(model_path)
-model = BertForSequenceClassification.from_pretrained(model_path)
+# Load model and tokenizer (local files only)
+model_path = r"D:\\02_TAMUCC SPRING 2025\\HCI\\01TERM-PROJECT\BACKEND\\trained_emotion_model"
+tokenizer = BertTokenizerFast.from_pretrained(model_path, local_files_only=True)
+model = BertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
 model.eval()
 
-# Friendly greeting responses
+# Greeting responses
 greeting_responses = [
     "Hey there! 👋 How's your day going?",
     "Hello! 😊 Hope you're doing well. How can I support you today?",
@@ -22,7 +24,7 @@ greeting_responses = [
     "Hey! 🖐️ I'm here for you. How are you feeling today?",
 ]
 
-# Empathetic responses for known emotions
+# Emotion-specific empathetic responses
 emotion_responses = {
     "admiration": "That's so inspiring! 🌟 What inspired you the most?",
     "amusement": "Haha, sounds hilarious! 😄 What made you laugh today?",
@@ -59,7 +61,7 @@ emotion_responses = {
     "neutral": "Alright! 🙂 Tell me more if you want!",
 }
 
-# Fallback responses if unknown emotion is predicted
+# Fallback responses if emotion is not found
 fallback_responses = [
     "I'm here for you! 🧡 Want to tell me more?",
     "Sounds interesting! ✨ Tell me what’s on your mind.",
@@ -71,21 +73,22 @@ fallback_responses = [
 def is_greeting(message):
     message = message.lower()
     greeting_keywords = [
-        "hello", "hi", "hey", "good morning", "good evening", "good afternoon", "how are you", "greetings", "sup", "yo"
+        "hello", "hi", "hey", "good morning", "good evening", "good afternoon",
+        "how are you", "greetings", "sup", "yo"
     ]
     return any(word in message for word in greeting_keywords)
 
-# Predict emotion using the model
+# Predict emotion using the fine-tuned BERT model
 def predict_emotion(text):
     inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
     with torch.no_grad():
         outputs = model(**inputs)
     logits = outputs.logits
     predicted_class_id = logits.argmax().item()
-    label = model.config.id2label.get(predicted_class_id, "neutral")  # safer
+    label = model.config.id2label.get(predicted_class_id, "neutral")
     return label
 
-# Chat API
+# Define the /chat API endpoint
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
@@ -107,6 +110,6 @@ def chat():
         "bot_response": bot_response
     })
 
-# Run app
+# Run Flask app
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
