@@ -92,10 +92,12 @@ def chat():
     user_message = data.get("message", "")
     print(f"User Message: {user_message}")
 
-    if is_greeting(user_message):
+    # If the user message is very short (like greetings), only then check greeting
+    if len(user_message.split()) <= 4 and is_greeting(user_message):
         bot_response = random.choice(greeting_responses)
         predicted_emotion = "greeting"
     else:
+        # Use the trained model to predict emotion
         predicted_emotion = predict_emotion(user_message)
         bot_response = emotion_responses.get(predicted_emotion, random.choice(fallback_responses))
 
