@@ -1,5 +1,5 @@
-# SATURDAY
-A EMPHATHATIC CHATBOT
+# SATURDAY (Sentiment-Aware Textual Understanding and Response Dialogue Assistant)
+AN EMPATHETIC CHATBOT
 
 ![SATURDAY](assets/banner.png)
 
@@ -10,9 +10,7 @@ A EMPHATHATIC CHATBOT
   Smart Sentiment Detection + Human-Like Conversations 🚀
 </p>
 
-<p align="center">
-  <img src="BANNER IMAGE LINK HERE" alt="Project Banner" />
-</p>
+
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" />
@@ -107,3 +105,22 @@ An intelligent chatbot that detects user emotions using NLP techniques (fine-tun
 
 ## 📄 License
 This project is open-source and free to use.
+
+## 📚 Appendix
+
+A. Training Logs (W&B)
+    - wandb-summary.json attached
+
+B. Model Evaluation
+    - Accuracy: 85%
+    - F1-Score: 0.84
+
+C. Example User Conversations
+    - Screenshots
+    - Input/Emotion/Response table
+
+D. Project Screenshots
+    - Frontend Chat Interface
+    - Backend Flask Server
+    - Banner Image
+
