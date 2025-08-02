@@ -12,3 +12,7 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
+    disk:
+      name: data
+      mountPath: /opt/render/project/src/BACKEND
+      sizeGB: 1

@@ -7,10 +7,14 @@ import torch
 import random
 import os
 from datetime import datetime
+from database_auth import DatabaseAuth
 
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)
+
+# Initialize authentication system
+auth = DatabaseAuth()
 
 # Conversation memory to make responses more contextual
 conversation_memory = {}
@@ -328,6 +332,87 @@ def chat():
     })
 
 # Serve React frontend files
+# Authentication endpoints
+@app.route('/api/register', methods=['POST'])
+def register():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        name = data.get('name', email.split('@')[0])  # Use email prefix as name if not provided
+        
+        if not email or not password:
+            return jsonify({"success": False, "message": "Email and password are required"}), 400
+        
+        result = auth.register_user(email, password, name)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Registration failed: {str(e)}"}), 500
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        
+        if not email or not password:
+            return jsonify({"success": False, "message": "Email and password are required"}), 400
+        
+        result = auth.login_user(email, password)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Login failed: {str(e)}"}), 500
+
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    try:
+        data = request.get_json()
+        session_id = data.get('session_id')
+        
+        if not session_id:
+            return jsonify({"success": False, "message": "Session ID is required"}), 400
+        
+        result = auth.logout_user(session_id)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Logout failed: {str(e)}"}), 500
+
+@app.route('/api/validate-session', methods=['POST'])
+def validate_session():
+    try:
+        data = request.get_json()
+        session_id = data.get('session_id')
+        
+        if not session_id:
+            return jsonify({"valid": False, "message": "Session ID is required"}), 400
+        
+        result = auth.validate_session(session_id)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"valid": False, "message": f"Session validation failed: {str(e)}"}), 500
+
+@app.route('/api/user-profile', methods=['POST'])
+def get_user_profile():
+    try:
+        data = request.get_json()
+        session_id = data.get('session_id')
+        
+        if not session_id:
+            return jsonify({"success": False, "message": "Session ID is required"}), 400
+        
+        # First validate the session
+        session_result = auth.validate_session(session_id)
+        if not session_result["valid"]:
+            return jsonify({"success": False, "message": "Invalid session"}), 401
+        
+        # Get user profile
+        user_id = session_result["user"]["id"]
+        result = auth.get_user_profile(user_id)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Failed to get profile: {str(e)}"}), 500
+
 @app.route('/')
 def serve_frontend():
     return send_from_directory('../build', 'index.html')

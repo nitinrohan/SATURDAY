@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, Bot, Sparkles, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Bot, Sparkles, ArrowRight, User } from 'lucide-react';
 
 const LoginContainer = styled(motion.div)`
   min-height: 100vh;
@@ -11,6 +11,15 @@ const LoginContainer = styled(motion.div)`
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow: hidden;
+  padding: 20px;
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
 `;
 
 const BackgroundParticles = styled.div`
@@ -41,6 +50,18 @@ const LoginCard = styled(motion.div)`
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 2;
+  
+  @media (max-width: 768px) {
+    padding: 32px 24px;
+    margin: 20px;
+    max-width: calc(100% - 40px);
+  }
+  
+  @media (max-width: 480px) {
+    padding: 24px 16px;
+    margin: 16px;
+    max-width: calc(100% - 32px);
+  }
 `;
 
 const Logo = styled.div`
@@ -237,24 +258,58 @@ const Feature = styled.div`
 const Login = ({ onLogin, onGuestLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
-    // Simulate login process
-    setTimeout(() => {
-      if (email && password) {
-        onLogin({ email, password });
+    try {
+      if (isRegistering) {
+        // Handle registration
+        if (!email || !password || !name) {
+          setError('Please fill in all fields');
+          setIsLoading(false);
+          return;
+        }
+        
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password, name }),
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Auto-login after successful registration
+          onLogin({ email, password });
+        } else {
+          setError(result.message);
+        }
       } else {
-        setError('Please fill in all fields');
+        // Handle login
+        if (!email || !password) {
+          setError('Please fill in all fields');
+          setIsLoading(false);
+          return;
+        }
+        
+        onLogin({ email, password });
       }
-      setIsLoading(false);
-    }, 1000);
+    } catch (error) {
+      console.error('Auth error:', error);
+      setError('An error occurred. Please try again.');
+    }
+    
+    setIsLoading(false);
   };
 
   const handleGuestLogin = () => {
@@ -315,6 +370,19 @@ const Login = ({ onLogin, onGuestLogin }) => {
         </Logo>
 
         <Form onSubmit={handleSubmit}>
+          {isRegistering && (
+            <InputGroup>
+              <User size={20} className="input-icon" />
+              <Input
+                type="text"
+                placeholder="Full name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required={isRegistering}
+              />
+            </InputGroup>
+          )}
+          
           <InputGroup>
             <Mail size={20} className="input-icon" />
             <Input
@@ -356,29 +424,29 @@ const Login = ({ onLogin, onGuestLogin }) => {
             )}
           </AnimatePresence>
 
-          <LoginButton
-            type="submit"
-            disabled={isLoading}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {isLoading ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                >
-                  <Sparkles size={20} />
-                </motion.div>
-                Signing in...
-              </>
-            ) : (
-              <>
-                Sign In
-                <ArrowRight size={20} />
-              </>
-            )}
-          </LoginButton>
+                           <LoginButton
+                   type="submit"
+                   disabled={isLoading}
+                   whileHover={{ scale: 1.02 }}
+                   whileTap={{ scale: 0.98 }}
+                 >
+                   {isLoading ? (
+                     <>
+                       <motion.div
+                         animate={{ rotate: 360 }}
+                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                       >
+                         <Sparkles size={20} />
+                       </motion.div>
+                       {isRegistering ? 'Creating account...' : 'Signing in...'}
+                     </>
+                   ) : (
+                     <>
+                       {isRegistering ? 'Create Account' : 'Sign In'}
+                       <ArrowRight size={20} />
+                     </>
+                   )}
+                 </LoginButton>
 
           <Divider>
             <div className="line" />
@@ -386,15 +454,37 @@ const Login = ({ onLogin, onGuestLogin }) => {
             <div className="line" />
           </Divider>
 
-          <GuestButton
-            type="button"
-            onClick={handleGuestLogin}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Bot size={20} />
-            Continue as Guest
-          </GuestButton>
+                           <GuestButton
+                   type="button"
+                   onClick={handleGuestLogin}
+                   whileHover={{ scale: 1.02 }}
+                   whileTap={{ scale: 0.98 }}
+                 >
+                   <Bot size={20} />
+                   Continue as Guest
+                 </GuestButton>
+                 
+                 <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                   <button
+                     type="button"
+                     onClick={() => {
+                       setIsRegistering(!isRegistering);
+                       setError('');
+                       setName('');
+                     }}
+                     style={{
+                       background: 'none',
+                       border: 'none',
+                       color: 'rgba(255, 255, 255, 0.8)',
+                       cursor: 'pointer',
+                       fontSize: '14px',
+                       textDecoration: 'underline',
+                       padding: '8px',
+                     }}
+                   >
+                     {isRegistering ? 'Already have an account? Sign In' : "Don't have an account? Register"}
+                   </button>
+                 </div>
         </Form>
 
         <Features>

@@ -11,6 +11,14 @@ const HeaderContainer = styled(motion.header)`
   position: sticky;
   top: 0;
   z-index: 100;
+  
+  @media (max-width: 768px) {
+    padding: 16px 0;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px 0;
+  }
 `;
 
 const HeaderContent = styled.div`
@@ -20,6 +28,14 @@ const HeaderContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 12px;
+  }
 `;
 
 const Logo = styled(motion.div)`
@@ -35,6 +51,14 @@ const Logo = styled(motion.div)`
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 1.3rem;
+    }
   }
 
   .logo-icon {

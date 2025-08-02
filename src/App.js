@@ -10,10 +10,15 @@ import Login from "./components/Login";
 
 const AppContainer = styled.div`
   min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  
+  @media (max-width: 768px) {
+    min-height: 100vh;
+  }
 `;
 
 const ChatContainer = styled(motion.div)`
@@ -25,6 +30,16 @@ const ChatContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
   height: calc(100vh - 120px);
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+    height: calc(100vh - 100px);
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px;
+    height: calc(100vh - 80px);
+  }
 `;
 
 const MessagesContainer = styled.div`
@@ -37,6 +52,18 @@ const MessagesContainer = styled.div`
   margin-bottom: 20px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+  }
 `;
 
 const InputContainer = styled(motion.div)`
@@ -49,6 +76,18 @@ const InputContainer = styled(motion.div)`
   padding: 15px 20px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+    border-radius: 20px;
+    gap: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 10px 12px;
+    border-radius: 18px;
+    gap: 6px;
+  }
 `;
 
 const Input = styled.input`
@@ -62,6 +101,14 @@ const Input = styled.input`
 
   &::placeholder {
     color: rgba(255, 255, 255, 0.7);
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 14px;
   }
 `;
 
@@ -88,6 +135,16 @@ const SendButton = styled(motion.button)`
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+  }
+  
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 36px;
+    height: 36px;
   }
 `;
 
@@ -248,11 +305,32 @@ function App() {
     setIsLoading(false);
   };
 
-  const handleLogin = (credentials) => {
-    // Simulate successful login
-    setUser({ email: credentials.email, name: credentials.email.split('@')[0] });
-    setIsLoggedIn(true);
-    setSessionId(`session_${Date.now()}`);
+  const handleLogin = async (credentials) => {
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setUser(result.user);
+        setIsLoggedIn(true);
+        setSessionId(result.session_id);
+        // Store session in localStorage for persistence
+        localStorage.setItem('session_id', result.session_id);
+        localStorage.setItem('user', JSON.stringify(result.user));
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Login failed. Please try again.');
+    }
   };
 
   const handleGuestLogin = () => {
@@ -261,11 +339,27 @@ function App() {
     setSessionId(`guest_${Date.now()}`);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (sessionId && !sessionId.startsWith('guest_')) {
+      try {
+        await fetch('/api/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ session_id: sessionId }),
+        });
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    }
+    
     setIsLoggedIn(false);
     setUser(null);
     setSessionId(null);
     setMessages([]);
+    localStorage.removeItem('session_id');
+    localStorage.removeItem('user');
   };
 
   const handleKeyPress = (e) => {
@@ -274,6 +368,40 @@ function App() {
       sendMessage();
     }
   };
+
+  // Check for existing session on app load
+  useEffect(() => {
+    const savedSessionId = localStorage.getItem('session_id');
+    const savedUser = localStorage.getItem('user');
+    
+    if (savedSessionId && savedUser) {
+      // Validate session with backend
+      fetch('/api/validate-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ session_id: savedSessionId }),
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.valid) {
+          setUser(result.user);
+          setIsLoggedIn(true);
+          setSessionId(savedSessionId);
+        } else {
+          // Clear invalid session
+          localStorage.removeItem('session_id');
+          localStorage.removeItem('user');
+        }
+      })
+      .catch(error => {
+        console.error('Session validation error:', error);
+        localStorage.removeItem('session_id');
+        localStorage.removeItem('user');
+      });
+    }
+  }, []);
 
   useEffect(() => {
     // Auto-scroll to bottom when new messages arrive
