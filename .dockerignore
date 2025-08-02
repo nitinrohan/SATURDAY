@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Documentation
+*.md
+DEPLOYMENT.md
+README.md
+ReadMe.txt
+
+# Project files
+PROJECT REPORT.docx
+PROJECT REPORT.pdf
+SATURDAY_Project_Presentation_Updated.pptx
+
+# Screenshots
+screenshots/
+
+# Development files
+deploy.sh
+render.yaml
+Procfile
+runtime.txt
+gunicorn.conf.py
+
+# OS
+.DS_Store
+Thumbs.db 

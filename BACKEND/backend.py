@@ -1,20 +1,34 @@
 # BACKEND/backend.py
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from transformers import BertTokenizerFast, BertForSequenceClassification
 import torch
 import random
+import os
 
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)
 
 # Load model and tokenizer (local files only)
-model_path = r"D:\\02_TAMUCC SPRING 2025\\HCI\\01TERM-PROJECT\BACKEND\\trained_emotion_model"
-tokenizer = BertTokenizerFast.from_pretrained(model_path, local_files_only=True)
-model = BertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
-model.eval()
+import os
+model_path = os.path.join(os.path.dirname(__file__), "trained_emotion_model")
+
+# Check if model files exist
+if os.path.exists(model_path):
+    try:
+        tokenizer = BertTokenizerFast.from_pretrained(model_path, local_files_only=True)
+        model = BertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
+        model.eval()
+        MODEL_LOADED = True
+    except Exception as e:
+        print(f"Warning: Could not load model from {model_path}: {e}")
+        MODEL_LOADED = False
+else:
+    print(f"Warning: Model directory not found at {model_path}")
+    print("Using fallback emotion detection without ML model")
+    MODEL_LOADED = False
 
 # Greeting responses
 greeting_responses = [
@@ -78,15 +92,46 @@ def is_greeting(message):
     ]
     return any(word in message for word in greeting_keywords)
 
-# Predict emotion using the fine-tuned BERT model
+# Predict emotion using the fine-tuned BERT model or fallback
 def predict_emotion(text):
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
-    with torch.no_grad():
-        outputs = model(**inputs)
-    logits = outputs.logits
-    predicted_class_id = logits.argmax().item()
-    label = model.config.id2label.get(predicted_class_id, "neutral")
-    return label
+    if MODEL_LOADED:
+        try:
+            inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
+            with torch.no_grad():
+                outputs = model(**inputs)
+            logits = outputs.logits
+            predicted_class_id = logits.argmax().item()
+            label = model.config.id2label.get(predicted_class_id, "neutral")
+            return label
+        except Exception as e:
+            print(f"Error predicting emotion with model: {e}")
+            return fallback_emotion_detection(text)
+    else:
+        return fallback_emotion_detection(text)
+
+# Fallback emotion detection using keyword matching
+def fallback_emotion_detection(text):
+    text_lower = text.lower()
+    
+    # Simple keyword-based emotion detection
+    emotion_keywords = {
+        "sadness": ["sad", "depressed", "unhappy", "crying", "tears", "lonely", "miss", "lost"],
+        "joy": ["happy", "excited", "great", "wonderful", "amazing", "fantastic", "joy", "laugh"],
+        "anger": ["angry", "mad", "furious", "hate", "rage", "annoyed", "frustrated"],
+        "fear": ["scared", "afraid", "terrified", "worried", "anxious", "nervous", "panic"],
+        "love": ["love", "adore", "heart", "romantic", "beautiful", "sweet", "caring"],
+        "surprise": ["wow", "omg", "amazing", "incredible", "unbelievable", "shocked"],
+        "gratitude": ["thank", "thanks", "grateful", "appreciate", "blessed"],
+        "confusion": ["confused", "don't understand", "what", "how", "why", "puzzled"],
+        "curiosity": ["curious", "wonder", "interested", "tell me more", "explain"],
+        "optimism": ["hope", "optimistic", "positive", "future", "better", "improve"]
+    }
+    
+    for emotion, keywords in emotion_keywords.items():
+        if any(keyword in text_lower for keyword in keywords):
+            return emotion
+    
+    return "neutral"
 
 # Define the /chat API endpoint
 @app.route("/chat", methods=["POST"])
@@ -110,6 +155,15 @@ def chat():
         "bot_response": bot_response
     })
 
+# Serve frontend files
+@app.route('/')
+def serve_frontend():
+    return send_from_directory('../frontend', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory('../frontend', path)
+
 # Run Flask app
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=True)

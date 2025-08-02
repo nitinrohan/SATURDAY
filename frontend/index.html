@@ -1,104 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SATURDAY 🤖</title>
-  <link rel="stylesheet" href="stylesheets/STYLE.CSS" />
-</head>
-<body>
-  <section class="section-chatbot container">
-    <div class="chatbot-container">
-      <div class="chatbot-name-container">
-        <h1 class="chatbot-name">SATURDAY 🤖</h1>
-      </div>
-      <div class="chat-container">
-        <div class="chat-box" id="chat-box">
-          <div class="chat-message bot">Hello! How can I assist you today?</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SATURDAY 🤖</title>
+    <link rel="stylesheet" href="stylesheets/STYLE.CSS" />
+  </head>
+  <body>
+    <section class="section-chatbot container">
+      <div class="chatbot-container">
+        <div class="chatbot-name-container">
+          <h1 class="chatbot-name">SATURDAY 🤖</h1>
         </div>
-        <div class="chat-input-container">
-          <input type="text" id="user-input" placeholder="Type a message..." />
-          <button id="send-btn">Send</button>
+        <div class="chat-container">
+          <div class="chat-box" id="chat-box">
+            <div class="chat-message bot">
+              Hello! How can I assist you today?
+            </div>
+          </div>
+          <div class="chat-input-container">
+            <input
+              type="text"
+              id="user-input"
+              placeholder="Type a message..."
+            />
+            <button id="send-btn">Send</button>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <script>
-    async function sendMessage() {
-      const userInputField = document.getElementById("user-input");
-      const userInput = userInputField.value.trim();
-      if (userInput === "") return;
+    <script>
+      // Backend URL configuration
+      const BACKEND_URL =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:10000"
+          : window.location.origin;
 
-      const chatBox = document.getElementById("chat-box");
+      async function sendMessage() {
+        const userInputField = document.getElementById("user-input");
+        const userInput = userInputField.value.trim();
+        if (userInput === "") return;
 
-      // Show user's message
-      const userMessage = document.createElement("div");
-      userMessage.classList.add("chat-message", "user");
-      userMessage.textContent = userInput;
-      chatBox.appendChild(userMessage);
-      chatBox.scrollTop = chatBox.scrollHeight;
+        const chatBox = document.getElementById("chat-box");
 
-      userInputField.value = "";
-
-      // Show "Bot is typing..."
-      const typingMessage = document.createElement("div");
-      typingMessage.classList.add("chat-message", "bot");
-      typingMessage.textContent = "SATURDAY is typing...";
-      chatBox.appendChild(typingMessage);
-      chatBox.scrollTop = chatBox.scrollHeight;
-
-      try {
-        const response = await fetch("http://localhost:5000/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message: userInput }),
-        });
-
-        const data = await response.json();
-        const botReply = data.bot_response;
-        const predictedEmotion = data.predicted_emotion;
-
-        setTimeout(() => {
-          // Remove typing...
-          typingMessage.remove();
-
-          // Add bot's real message
-          const botMessage = document.createElement("div");
-          botMessage.classList.add("chat-message", "bot");
-          
-          // Add emoji dynamically
-          const emotionEmojis = {
-            "sadness": "💙", "joy": "😄", "anger": "🔥", "fear": "😱", "love": "❤️",
-            "gratitude": "🙏", "confusion": "🤔", "curiosity": "🔍", "neutral": "🙂",
-            "positive": "🌟", "negative": "😔", "surprise": "😲", "relief": "😌",
-            "guilt": "🌼", "grief": "🖤", "pride": "🏆", "excitement": "🎉",
-            "nervousness": "💪", "disgust": "😖", "admiration": "🌟", "jealousy": "💚"
-          };
-          
-          const emoji = emotionEmojis[predictedEmotion] || "🤖";
-          botMessage.textContent = `${botReply} ${emoji}`;
-
-          chatBox.appendChild(botMessage);
-          chatBox.scrollTop = chatBox.scrollHeight;
-        }, Math.floor(Math.random() * 1500) + 1000); // random delay 1s - 2.5s
-      } catch (error) {
-        typingMessage.remove();
-        const errorMessage = document.createElement("div");
-        errorMessage.classList.add("chat-message", "bot");
-        errorMessage.textContent = "Sorry, I'm having trouble connecting.";
-        chatBox.appendChild(errorMessage);
+        // Show user's message
+        const userMessage = document.createElement("div");
+        userMessage.classList.add("chat-message", "user");
+        userMessage.textContent = userInput;
+        chatBox.appendChild(userMessage);
         chatBox.scrollTop = chatBox.scrollHeight;
-        console.error("Error:", error);
-      }
-    }
 
-    document.getElementById("send-btn").addEventListener("click", sendMessage);
-    document.getElementById("user-input").addEventListener("keypress", function (e) {
-      if (e.key === "Enter") sendMessage();
-    });
-  </script>
-</body>
+        userInputField.value = "";
+
+        // Show "Bot is typing..."
+        const typingMessage = document.createElement("div");
+        typingMessage.classList.add("chat-message", "bot");
+        typingMessage.textContent = "SATURDAY is typing...";
+        chatBox.appendChild(typingMessage);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+          const response = await fetch(`${BACKEND_URL}/chat`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ message: userInput }),
+          });
+
+          const data = await response.json();
+          const botReply = data.bot_response;
+          const predictedEmotion = data.predicted_emotion;
+
+          setTimeout(() => {
+            // Remove typing...
+            typingMessage.remove();
+
+            // Add bot's real message
+            const botMessage = document.createElement("div");
+            botMessage.classList.add("chat-message", "bot");
+
+            // Add emoji dynamically
+            const emotionEmojis = {
+              sadness: "💙",
+              joy: "😄",
+              anger: "🔥",
+              fear: "😱",
+              love: "❤️",
+              gratitude: "🙏",
+              confusion: "🤔",
+              curiosity: "🔍",
+              neutral: "🙂",
+              positive: "🌟",
+              negative: "😔",
+              surprise: "😲",
+              relief: "😌",
+              guilt: "🌼",
+              grief: "🖤",
+              pride: "🏆",
+              excitement: "🎉",
+              nervousness: "💪",
+              disgust: "😖",
+              admiration: "🌟",
+              jealousy: "💚",
+            };
+
+            const emoji = emotionEmojis[predictedEmotion] || "🤖";
+            botMessage.textContent = `${botReply} ${emoji}`;
+
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+          }, Math.floor(Math.random() * 1500) + 1000); // random delay 1s - 2.5s
+        } catch (error) {
+          typingMessage.remove();
+          const errorMessage = document.createElement("div");
+          errorMessage.classList.add("chat-message", "bot");
+          errorMessage.textContent = "Sorry, I'm having trouble connecting.";
+          chatBox.appendChild(errorMessage);
+          chatBox.scrollTop = chatBox.scrollHeight;
+          console.error("Error:", error);
+        }
+      }
+
+      document
+        .getElementById("send-btn")
+        .addEventListener("click", sendMessage);
+      document
+        .getElementById("user-input")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") sendMessage();
+        });
+    </script>
+  </body>
 </html>
