@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Bot, User, Sparkles, Heart, Brain } from "lucide-react";
+import { Send, Bot, User, Sparkles, Heart, Brain, LogOut } from "lucide-react";
 import ChatMessage from "./components/ChatMessage";
 import TypingIndicator from "./components/TypingIndicator";
 import Header from "./components/Header";
 import FloatingParticles from "./components/FloatingParticles";
+import Login from "./components/Login";
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -145,6 +146,9 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [sessionId, setSessionId] = useState(null);
 
   // Backend URL configuration
   const BACKEND_URL =
@@ -203,7 +207,10 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: userMessage }),
+        body: JSON.stringify({ 
+          message: userMessage,
+          session_id: sessionId 
+        }),
       });
 
       const data = await response.json();
@@ -241,6 +248,26 @@ function App() {
     setIsLoading(false);
   };
 
+  const handleLogin = (credentials) => {
+    // Simulate successful login
+    setUser({ email: credentials.email, name: credentials.email.split('@')[0] });
+    setIsLoggedIn(true);
+    setSessionId(`session_${Date.now()}`);
+  };
+
+  const handleGuestLogin = () => {
+    setUser({ email: 'guest@example.com', name: 'Guest User' });
+    setIsLoggedIn(true);
+    setSessionId(`guest_${Date.now()}`);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+    setSessionId(null);
+    setMessages([]);
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -256,16 +283,21 @@ function App() {
     }
   }, [messages, isTyping]);
 
-  return (
+    return (
     <AppContainer>
       <FloatingParticles />
-      <Header />
-
-      <ChatContainer
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
+      
+      {!isLoggedIn ? (
+        <Login onLogin={handleLogin} onGuestLogin={handleGuestLogin} />
+      ) : (
+        <>
+          <Header user={user} onLogout={handleLogout} />
+          
+          <ChatContainer
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
         {messages.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
@@ -341,8 +373,10 @@ function App() {
           >
             <Send size={20} />
           </SendButton>
-        </InputContainer>
-      </ChatContainer>
+                    </InputContainer>
+          </ChatContainer>
+        </>
+      )}
     </AppContainer>
   );
 }

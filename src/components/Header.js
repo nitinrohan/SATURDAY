@@ -76,7 +76,7 @@ const StatusIndicator = styled(motion.div)`
   }
 `;
 
-const Header = () => {
+const Header = ({ user, onLogout }) => {
   return (
     <HeaderContainer
       initial={{ y: -100, opacity: 0 }}
@@ -93,16 +93,56 @@ const Header = () => {
           </div>
           <h1>SATURDAY</h1>
         </Logo>
-
-        <StatusIndicator
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <div className="status-dot" />
-          <span>AI Online</span>
-          <Sparkles size={16} />
-        </StatusIndicator>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <StatusIndicator
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="status-dot" />
+            <span>AI Online</span>
+            <Sparkles size={16} />
+          </StatusIndicator>
+          
+          {user && (
+            <motion.div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                color: 'white',
+                fontSize: '0.9rem',
+                fontWeight: '500'
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              <span>Welcome, {user.name}</span>
+              <motion.button
+                onClick={onLogout}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  color: 'white',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '0.8rem'
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <LogOut size={14} />
+                Logout
+              </motion.button>
+            </motion.div>
+          )}
+        </div>
       </HeaderContent>
     </HeaderContainer>
   );
