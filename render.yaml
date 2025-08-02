@@ -2,7 +2,12 @@ services:
   - type: web
     name: saturday-chatbot
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
+      npm install
+      npm run build
+      mkdir -p BACKEND/build
+      cp -r build/* BACKEND/build/
     startCommand: gunicorn BACKEND.backend:app
     envVars:
       - key: PYTHON_VERSION

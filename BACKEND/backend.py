@@ -155,14 +155,14 @@ def chat():
         "bot_response": bot_response
     })
 
-# Serve frontend files
+# Serve React frontend files
 @app.route('/')
 def serve_frontend():
-    return send_from_directory('../frontend', 'index.html')
+    return send_from_directory('../build', 'index.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
-    return send_from_directory('../frontend', path)
+    return send_from_directory('../build', path)
 
 # Run Flask app
 if __name__ == "__main__":
