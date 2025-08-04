@@ -26,9 +26,9 @@ model_path = os.path.join(os.path.dirname(__file__), "trained_emotion_model")
 # Check if model files exist
 if os.path.exists(model_path):
     try:
-        tokenizer = BertTokenizerFast.from_pretrained(model_path, local_files_only=True)
-        model = BertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
-        model.eval()
+tokenizer = BertTokenizerFast.from_pretrained(model_path, local_files_only=True)
+model = BertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
+model.eval()
         MODEL_LOADED = True
     except Exception as e:
         print(f"Warning: Could not load model from {model_path}: {e}")
@@ -236,13 +236,13 @@ def is_greeting(message):
 def predict_emotion(text):
     if MODEL_LOADED:
         try:
-            inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
-            with torch.no_grad():
-                outputs = model(**inputs)
-            logits = outputs.logits
-            predicted_class_id = logits.argmax().item()
-            label = model.config.id2label.get(predicted_class_id, "neutral")
-            return label
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
+    with torch.no_grad():
+        outputs = model(**inputs)
+    logits = outputs.logits
+    predicted_class_id = logits.argmax().item()
+    label = model.config.id2label.get(predicted_class_id, "neutral")
+    return label
         except Exception as e:
             print(f"Error predicting emotion with model: {e}")
             return fallback_emotion_detection(text)
