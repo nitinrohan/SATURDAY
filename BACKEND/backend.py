@@ -7,7 +7,7 @@ import torch
 import random
 import os
 from datetime import datetime
-from database_auth import DatabaseAuth
+from BACKEND.database_auth import DatabaseAuth
 
 # Initialize Flask app
 app = Flask(__name__)
