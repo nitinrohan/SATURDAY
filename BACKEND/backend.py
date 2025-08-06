@@ -5,13 +5,17 @@ from flask_cors import CORS
 from transformers import BertTokenizerFast, BertForSequenceClassification
 import torch
 import random
+import os
 
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)
 
 # Load model and tokenizer (local files only)
-model_path = r"D:\\02_TAMUCC SPRING 2025\\HCI\\01TERM-PROJECT\BACKEND\\trained_emotion_model"
+model_path = os.environ.get(
+    "MODEL_PATH",
+    os.path.join(os.path.dirname(__file__), "trained_emotion_model"),
+)
 tokenizer = BertTokenizerFast.from_pretrained(model_path, local_files_only=True)
 model = BertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
 model.eval()
