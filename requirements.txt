@@ -5,3 +5,4 @@ transformers
 pandas
 scikit-learn
 datasets
+gunicorn
