@@ -1,0 +1,9 @@
+PROJECT REPORT.docx
+PROJECT REPORT.pdf
+SATURDAY_Project_Presentation_Updated.pptx
+DATASETS/
+*.csv
+__pycache__/
+venv/
+.env/
+.git/
