@@ -448,6 +448,10 @@ const rise = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
+// Pricing is hidden for now - the app is fully free while we figure out the
+// business model. Flip this to true to bring the pricing section back.
+const SHOW_PRICING = false;
+
 const LandingPage = ({ onStart }) => {
   return (
     <Page>
@@ -458,7 +462,7 @@ const LandingPage = ({ onStart }) => {
         </Brand>
         <NavLinks>
           <a href="#how">How it works</a>
-          <a href="#pricing">Pricing</a>
+          {SHOW_PRICING && <a href="#pricing">Pricing</a>}
           <a href="#care">Your safety</a>
           <Btn className="cta" onClick={onStart} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
             Start talking
@@ -542,7 +546,8 @@ const LandingPage = ({ onStart }) => {
         </Cards>
       </Section>
 
-      {/* PRICING */}
+      {/* PRICING - hidden for now (SHOW_PRICING = false) */}
+      {SHOW_PRICING && (
       <Section id="pricing">
         <Head>
           <span className="kicker">Pricing</span>
@@ -588,6 +593,7 @@ const LandingPage = ({ onStart }) => {
           </Price>
         </Pricing>
       </Section>
+      )}
 
       {/* CARE */}
       <Section id="care">
