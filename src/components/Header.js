@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { Bot, Sparkles } from "lucide-react";
+import { Bot, Sparkles, LogOut } from "lucide-react";
 
 const HeaderContainer = styled(motion.header)`
   background: rgba(255, 255, 255, 0.1);
@@ -62,7 +62,7 @@ const Logo = styled(motion.div)`
   }
 
   .logo-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--violet) 0%, var(--indigo) 60%, var(--cyan) 100%);
     border-radius: 50%;
     width: 45px;
     height: 45px;

@@ -30,7 +30,7 @@ const Avatar = styled.div`
   ${(props) =>
     props.sender === "user"
       ? `
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--violet) 0%, var(--indigo) 60%, var(--cyan) 100%);
     color: white;
   `
       : `
@@ -50,7 +50,7 @@ const MessageBubble = styled(motion.div)`
   ${(props) =>
     props.sender === "user"
       ? `
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--violet) 0%, var(--indigo) 60%, var(--cyan) 100%);
     color: white;
     border-bottom-right-radius: 4px;
     margin-left: auto;
