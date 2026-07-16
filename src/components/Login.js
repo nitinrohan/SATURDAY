@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, Bot, Sparkles, ArrowRight, User } from 'lucide-react';
+import { API_BASE } from '../config';
 
 const LoginContainer = styled(motion.div)`
   min-height: 100vh;
@@ -279,7 +280,7 @@ const Login = ({ onLogin, onGuestLogin, onBack }) => {
           return;
         }
         
-        const response = await fetch('/api/register', {
+        const response = await fetch(`${API_BASE}/api/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

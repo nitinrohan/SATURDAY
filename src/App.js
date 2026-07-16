@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import SceneBackground from "./components/SceneBackground";
 import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
+import { API_BASE } from "./config";
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -211,12 +212,8 @@ function App() {
   const [sessionId, setSessionId] = useState(null);
   const [entered, setEntered] = useState(false);
 
-  // Backend URL configuration
-  const BACKEND_URL =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1"
-      ? "http://localhost:10000"
-      : window.location.origin;
+  // Backend URL configuration (see src/config.js)
+  const BACKEND_URL = API_BASE;
 
   const emotionEmojis = {
     sadness: "💙",
@@ -311,7 +308,7 @@ function App() {
 
   const handleLogin = async (credentials) => {
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch(`${API_BASE}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -346,7 +343,7 @@ function App() {
   const handleLogout = async () => {
     if (sessionId && !sessionId.startsWith('guest_')) {
       try {
-        await fetch('/api/logout', {
+        await fetch(`${API_BASE}/api/logout`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -380,7 +377,7 @@ function App() {
     
     if (savedSessionId && savedUser) {
       // Validate session with backend
-      fetch('/api/validate-session', {
+      fetch(`${API_BASE}/api/validate-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
