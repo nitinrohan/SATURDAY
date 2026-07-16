@@ -1,8 +1,11 @@
+# Runtime deps for the deployed backend (kept light for the free tier).
 flask
 flask-cors
-torch
-transformers
-pandas
-scikit-learn
-datasets
 gunicorn
+google-genai
+
+# NOTE: torch, transformers, pandas, scikit-learn, datasets are only needed to
+# TRAIN the optional BERT emotion model (BACKEND/train_emotion_model.py). They
+# are intentionally left out of the deploy so the image stays small and fast.
+# Install them locally if you retrain:
+#   pip install torch transformers pandas scikit-learn datasets

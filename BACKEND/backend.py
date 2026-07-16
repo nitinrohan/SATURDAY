@@ -2,12 +2,21 @@
 
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from transformers import BertTokenizerFast, BertForSequenceClassification
-import torch
 import random
 import os
 from datetime import datetime
 from BACKEND.database_auth import DatabaseAuth
+from BACKEND import llm
+
+# Optional heavy ML deps. The trained BERT model isn't shipped, so these are
+# only used if someone drops a model into trained_emotion_model/. Kept optional
+# so the deploy can skip torch/transformers entirely (much lighter, faster).
+try:
+    from transformers import BertTokenizerFast, BertForSequenceClassification
+    import torch
+except Exception:  # pragma: no cover
+    BertTokenizerFast = BertForSequenceClassification = None
+    torch = None
 
 # Initialize Flask app
 app = Flask(__name__, static_folder=None)
@@ -289,40 +298,38 @@ def chat():
             "emotion_history": []
         }
 
-    # If the user message is very short (like greetings), only then check greeting
+    # Emotion label for the UI badge (keyword-based; free, no model needed).
     if len(user_message.split()) <= 4 and is_greeting(user_message):
-        bot_response = random.choice(greeting_responses)
         predicted_emotion = "greeting"
     else:
-        # Use the trained model to predict emotion
         predicted_emotion = predict_emotion(user_message)
-        
-        # Get enhanced response based on emotion
-        if predicted_emotion in emotion_responses:
-            # Choose a random response from the emotion-specific responses
+
+    # Human-like reply via Gemini's free tier. Falls back to templates when the
+    # key is missing, the free tier is rate-limited, or a call fails.
+    history = conversation_memory[session_id]["messages"]
+    bot_response = llm.generate_reply(session_id, user_message, history)
+
+    if not bot_response:
+        if predicted_emotion == "greeting":
+            bot_response = random.choice(greeting_responses)
+        elif predicted_emotion in emotion_responses:
             bot_response = random.choice(emotion_responses[predicted_emotion])
         else:
-            # Use enhanced fallback responses
-            enhanced_fallback_responses = [
-                "I'm here for you! 🧡 That sounds really interesting. Tell me more about what's on your mind.",
-                "That's fascinating! ✨ I'd love to hear more about your thoughts on this.",
-                "I'm listening carefully. 👂 Your perspective is valuable. What else would you like to share?",
-                "Thanks for opening up. 🧡 I appreciate you sharing with me. What's the most important part of this for you?",
-                "That's really thought-provoking! 🤔 I can tell this matters to you. What would you like to explore further?",
-                "I'm curious about your take on this! 🔍 What's your experience been like?",
-                "That sounds meaningful to you. 💫 I'd love to understand more about your perspective.",
-                "You have such interesting thoughts! 🌟 What's the story behind this?",
-            ]
-            bot_response = random.choice(enhanced_fallback_responses)
+            bot_response = random.choice([
+                "I'm here for you. 🧡 Tell me more about what's on your mind.",
+                "I'm listening. 👂 What's the most important part of this for you?",
+                "Thanks for opening up. 🧡 What's been weighing on you the most?",
+                "I hear you. 💫 Want to tell me a little more about how that feels?",
+            ])
 
-        # Update conversation memory
-        conversation_memory[session_id]["messages"].append({
-            "user": user_message,
-            "bot": bot_response,
-            "emotion": predicted_emotion,
-            "timestamp": datetime.now().isoformat()
-        })
-        conversation_memory[session_id]["emotion_history"].append(predicted_emotion)
+    # Update conversation memory
+    conversation_memory[session_id]["messages"].append({
+        "user": user_message,
+        "bot": bot_response,
+        "emotion": predicted_emotion,
+        "timestamp": datetime.now().isoformat()
+    })
+    conversation_memory[session_id]["emotion_history"].append(predicted_emotion)
 
     return jsonify({
         "user_message": user_message,
