@@ -132,15 +132,8 @@ const ChatMessage = ({ message }) => {
           delay: 0.1,
         }}
       >
-        {!isUser && message.emotion && (
-          <div className="emotion-indicator">{message.emotion}</div>
-        )}
-
         <div className="message-text">
           {message.text}
-          {!isUser && message.emoji && (
-            <span className="message-emoji">{message.emoji}</span>
-          )}
         </div>
 
         <div className="message-time">{formatTime(message.timestamp)}</div>
