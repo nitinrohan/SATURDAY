@@ -10,7 +10,7 @@ from datetime import datetime
 from BACKEND.database_auth import DatabaseAuth
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_folder=None)
 CORS(app)
 
 # Initialize authentication system
