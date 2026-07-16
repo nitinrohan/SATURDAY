@@ -391,6 +391,58 @@ const Care = styled(Glass)`
   }
 `;
 
+const Footer = styled.footer`
+  margin-top: 70px;
+  padding: 40px 0 16px;
+  border-top: 1px solid var(--glass-brd);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    .orb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--cyan), var(--violet), var(--pink), var(--cyan));
+      box-shadow: 0 0 14px rgba(139, 92, 246, 0.6);
+    }
+  }
+  .tag {
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 48ch;
+    line-height: 1.6;
+  }
+  .maker {
+    margin-top: 6px;
+    font-size: 13.5px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+  }
+  .maker b {
+    background: linear-gradient(120deg, var(--cyan), var(--violet) 55%, var(--pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+  }
+  .fine {
+    color: var(--muted);
+    opacity: 0.7;
+    font-size: 12.5px;
+    margin-top: 4px;
+  }
+`;
+
 const rise = {
   hidden: { opacity: 0, y: 30 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
@@ -425,7 +477,7 @@ const LandingPage = ({ onStart }) => {
           </Title>
           <Sub>
             Talking to someone costs too much for too many people. SATURDAY is a gentle,
-            emotion-aware companion you can open up to — for the price of a coffee, not a co-pay.
+            emotion-aware companion you can open up to - for the price of a coffee, not a co-pay.
             It listens, understands how you feel, and helps you make sense of it.
           </Sub>
           <Actions>
@@ -438,7 +490,7 @@ const LandingPage = ({ onStart }) => {
           </Actions>
           <Note>
             <span className="dot" />
-            A supportive first step — <strong>&nbsp;not&nbsp;</strong> a substitute for a licensed professional.
+            A supportive first step - <strong>&nbsp;not&nbsp;</strong> a substitute for a licensed professional.
           </Note>
         </motion.div>
 
@@ -461,7 +513,7 @@ const LandingPage = ({ onStart }) => {
       {/* STATS */}
       <Stats>
         <div><b>1 in 5</b><span>adults live with a mental-health condition</span></div>
-        <div><b>~60%</b><span>never get care — cost is the #1 barrier</span></div>
+        <div><b>~60%</b><span>never get care - cost is the #1 barrier</span></div>
         <div><b>24/7</b><span>SATURDAY is here whenever it hits hardest</span></div>
       </Stats>
 
@@ -475,17 +527,17 @@ const LandingPage = ({ onStart }) => {
           <Card initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={rise}>
             <div className="ic"><MessageCircle color="#fff" /></div>
             <h3>You talk, freely</h3>
-            <p>Type whatever's on your mind — no forms, no judgement, no waiting room. Say as little or as much as you want.</p>
+            <p>Type whatever's on your mind - no forms, no judgement, no waiting room. Say as little or as much as you want.</p>
           </Card>
           <Card initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={rise}>
             <div className="ic"><Brain color="#fff" /></div>
             <h3>It understands</h3>
-            <p>A fine-tuned model reads the emotion behind your words — sadness, fear, anger, joy — so replies actually meet you where you are.</p>
+            <p>A fine-tuned model reads the emotion behind your words - sadness, fear, anger, joy - so replies actually meet you where you are.</p>
           </Card>
           <Card initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={rise}>
             <div className="ic"><Heart color="#fff" /></div>
             <h3>You feel heard</h3>
-            <p>SATURDAY responds with empathy and gentle questions to help you untangle the knot — and points you onward when you need more.</p>
+            <p>SATURDAY responds with empathy and gentle questions to help you untangle the knot - and points you onward when you need more.</p>
           </Card>
         </Cards>
       </Section>
@@ -512,7 +564,7 @@ const LandingPage = ({ onStart }) => {
           <Price className="featured" initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={rise}>
             <span className="badge">Most helpful</span>
             <h3>Companion</h3>
-            <div className="amount"><span className="cur">$</span>3<span className="mo">/mo</span></div>
+            <div className="amount"><span className="cur">$</span>2.99<span className="mo">/mo</span></div>
             <p className="per">the price of a coffee</p>
             <ul>
               <li><Check size={18} />Everything in Just talk</li>
@@ -544,7 +596,7 @@ const LandingPage = ({ onStart }) => {
           <div>
             <h2>We're a first step, not the whole journey.</h2>
             <p>
-              SATURDAY can help you feel heard and take some weight off your shoulders — but it is{" "}
+              SATURDAY can help you feel heard and take some weight off your shoulders - but it is{" "}
               <strong>not a doctor, therapist, or emergency service</strong>, and it can't diagnose or
               treat conditions. If you're in crisis or thinking about harming yourself, please reach out
               to a trained human right now.
@@ -562,6 +614,23 @@ const LandingPage = ({ onStart }) => {
           Talk to SATURDAY now
         </Btn>
       </div>
+
+      <Footer>
+        <div className="brand">
+          <span className="orb" />
+          SATURDAY
+        </div>
+        <p className="tag">
+          Sentiment-Aware Textual Understanding and Response Dialogue Assistant - built to make
+          a caring first conversation something everyone can afford.
+        </p>
+        <p className="maker">
+          Designed &amp; built by <b>Nitin Sampath Rohan Bheemavarapu</b>
+        </p>
+        <p className="fine">
+          © {new Date().getFullYear()} SATURDAY · A supportive companion, not medical advice.
+        </p>
+      </Footer>
     </Page>
   );
 };
