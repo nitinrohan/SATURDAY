@@ -33,5 +33,7 @@ EXPOSE 10000
 ENV PYTHONPATH=/app
 ENV FLASK_ENV=production
 
-# Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--workers", "2", "--timeout", "120", "BACKEND.backend:app"] 
+# Run the application.
+# 1 worker: torch + transformers are memory-heavy and a 2nd worker OOMs the
+# 512MB free tier. Bump this once you move to a larger instance.
+CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--workers", "1", "--timeout", "120", "BACKEND.backend:app"]
