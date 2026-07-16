@@ -8,10 +8,11 @@ const LoginContainer = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: transparent;
   position: relative;
   overflow: hidden;
   padding: 20px;
+  z-index: 2;
   
   @media (max-width: 768px) {
     padding: 16px;
@@ -69,7 +70,7 @@ const Logo = styled.div`
   margin-bottom: 32px;
   
   .logo-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--violet) 0%, var(--indigo) 60%, var(--cyan) 100%);
     border-radius: 50%;
     width: 64px;
     height: 64px;
@@ -160,7 +161,7 @@ const Input = styled.input`
 `;
 
 const LoginButton = styled(motion.button)`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--violet) 0%, var(--indigo) 60%, var(--cyan) 100%);
   border: none;
   border-radius: 12px;
   padding: 16px;
@@ -255,7 +256,7 @@ const Feature = styled.div`
   }
 `;
 
-const Login = ({ onLogin, onGuestLogin }) => {
+const Login = ({ onLogin, onGuestLogin, onBack }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -361,6 +362,24 @@ const Login = ({ onLogin, onGuestLogin }) => {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, delay: 0.2 }}
       >
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            style={{
+              background: "none",
+              border: "none",
+              color: "rgba(255,255,255,0.7)",
+              cursor: "pointer",
+              fontSize: "14px",
+              padding: 0,
+              marginBottom: "16px",
+            }}
+          >
+            ← Back to home
+          </button>
+        )}
+
         <Logo>
           <div className="logo-icon">
             <Bot size={32} color="white" />

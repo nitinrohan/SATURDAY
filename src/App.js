@@ -5,17 +5,18 @@ import { Send, Bot, User, Sparkles, Heart, Brain, LogOut } from "lucide-react";
 import ChatMessage from "./components/ChatMessage";
 import TypingIndicator from "./components/TypingIndicator";
 import Header from "./components/Header";
-import FloatingParticles from "./components/FloatingParticles";
+import SceneBackground from "./components/SceneBackground";
+import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
 
 const AppContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: transparent;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
-  
+  overflow-x: hidden;
+
   @media (max-width: 768px) {
     min-height: 100vh;
   }
@@ -30,7 +31,9 @@ const ChatContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
   height: calc(100vh - 120px);
-  
+  position: relative;
+  z-index: 2;
+
   @media (max-width: 768px) {
     padding: 16px;
     height: calc(100vh - 100px);
@@ -113,7 +116,7 @@ const Input = styled.input`
 `;
 
 const SendButton = styled(motion.button)`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--violet) 0%, var(--indigo) 60%, var(--cyan) 100%);
   border: none;
   border-radius: 50%;
   width: 45px;
@@ -206,6 +209,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [sessionId, setSessionId] = useState(null);
+  const [entered, setEntered] = useState(false);
 
   // Backend URL configuration
   const BACKEND_URL =
@@ -411,12 +415,19 @@ function App() {
     }
   }, [messages, isTyping]);
 
+  // If a session was restored, skip the landing page straight to chat.
+  useEffect(() => {
+    if (isLoggedIn) setEntered(true);
+  }, [isLoggedIn]);
+
     return (
     <AppContainer>
-      <FloatingParticles />
-      
-      {!isLoggedIn ? (
-        <Login onLogin={handleLogin} onGuestLogin={handleGuestLogin} />
+      <SceneBackground />
+
+      {!entered ? (
+        <LandingPage onStart={() => setEntered(true)} />
+      ) : !isLoggedIn ? (
+        <Login onLogin={handleLogin} onGuestLogin={handleGuestLogin} onBack={() => setEntered(false)} />
       ) : (
         <>
           <Header user={user} onLogout={handleLogout} />
