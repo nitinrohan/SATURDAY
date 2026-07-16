@@ -24,7 +24,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Copy React build from frontend-builder
-COPY --from=frontend-builder /app/build ./BACKEND/build
+# Copy the fresh React build into the dir Flask serves (backend.py serves ../build)
+RUN rm -rf ./build
+COPY --from=frontend-builder /app/build ./build
 
 # Expose port
 EXPOSE 10000
