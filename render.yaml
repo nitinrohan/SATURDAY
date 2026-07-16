@@ -1,18 +1,17 @@
+# Backend-only service for the split deploy (React frontend lives on Vercel).
+# Serves /chat and the /api/* auth endpoints; CORS is open so the Vercel
+# frontend can reach it.
+#
+# Note: no persistent disk on the free plan, so users.db resets on each
+# redeploy. Move to a paid disk (or external Postgres) if you need durable auth.
 services:
   - type: web
-    name: saturday-chatbot
+    name: saturday-backend
     env: python
-    buildCommand: |
-      pip install -r requirements.txt
-      npm install
-      npm run build
-      mkdir -p BACKEND/build
-      cp -r build/* BACKEND/build/
-    startCommand: gunicorn BACKEND.backend:app
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # Bind to Render's $PORT; 1 worker (torch is memory-heavy); generous boot timeout.
+    startCommand: gunicorn BACKEND.backend:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
     envVars:
       - key: PYTHON_VERSION
-        value: 3.10.0
-    disk:
-      name: data
-      mountPath: /opt/render/project/src/BACKEND
-      sizeGB: 1
+        value: "3.11"
